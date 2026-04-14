@@ -6,11 +6,11 @@
       <button class="close-sidebar-btn" id="close-sidebar-btn">&times;</button>
     </div>
     <nav class="sidebar-nav">
-      <a href="#" class="nav-item active">
+      <a href="#" class="nav-item active" id="nav-link-dashboard">
         <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
         Dashboard
       </a>
-      <a href="#" class="nav-item">
+      <a href="#" class="nav-item" id="nav-link-cases">
         <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
         My Case
       </a>
@@ -60,132 +60,152 @@
     <!-- Dashboard Content -->
     <main class="dashboard-wrapper">
       
-      <!-- Welcome Header -->
-      <header class="dashboard-page-header">
-        <div class="header-titles">
-          <h1 id="welcome-text">Welcome back, Client</h1>
-          <p class="subtitle">Here is the latest status of your case.</p>
-        </div>
-        <div class="header-actions">
-          <div class="stage-badge" id="case-stage">
-            Loading...
+      <!-- Dashboard View -->
+      <div id="view-dashboard">
+        <!-- Welcome Header -->
+        <header class="dashboard-page-header">
+          <div class="header-titles">
+            <h1 id="welcome-text">Welcome back, Client</h1>
+            <p class="subtitle">Here is the latest status of your case.</p>
           </div>
-        </div>
-      </header>
-
-      <!-- KPI Grid -->
-      <section class="kpi-grid">
-        <div class="kpi-card">
-          <div class="kpi-icon case-icon">
-            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-          </div>
-           <div class="kpi-content">
-             <p class="kpi-label">Case Status</p>
-             <h3 class="kpi-value" id="kpi-status-text">Active</h3>
-           </div>
-        </div>
-        <div class="kpi-card">
-          <div class="kpi-icon docs-icon">
-            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
-          </div>
-           <div class="kpi-content">
-             <p class="kpi-label">Available Documents</p>
-             <h3 class="kpi-value">2 Files</h3>
-           </div>
-        </div>
-        <div class="kpi-card">
-          <div class="kpi-icon msgs-icon">
-             <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
-          </div>
-           <div class="kpi-content">
-             <p class="kpi-label">New Messages</p>
-             <h3 class="kpi-value">1 Unread</h3>
-           </div>
-        </div>
-        <div class="kpi-card">
-          <div class="kpi-icon update-icon">
-             <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-          </div>
-           <div class="kpi-content">
-             <p class="kpi-label">Next Update Expected</p>
-             <h3 class="kpi-value">In 3 Days</h3>
-           </div>
-        </div>
-      </section>
-
-      <!-- Main Panels -->
-      <div class="dashboard-panels">
-        
-        <!-- Case Summary -->
-        <section class="panel main-panel">
-          <div class="panel-header">
-            <h2>Case Summary</h2>
-          </div>
-          <div class="panel-body">
-            <div class="legal-summary-block">
-              <h4 class="summary-title">Current File Overview</h4>
-              <p id="case-summary" class="summary-text">Loading...</p>
+          <div class="header-actions">
+            <div class="stage-badge" id="case-stage">
+              Loading...
             </div>
-            
-            <!-- Quick Documents List embedded in summary -->
-            <div class="quick-documents mt-4">
-              <h4>Recent Documents</h4>
-              <ul class="clean-docs-list">
-                 <li>
-                   <svg class="file-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
-                   <span class="file-name">Client_Agreement.pdf</span>
-                   <button class="doc-dl-btn">Download</button>
-                 </li>
-                 <li>
-                   <svg class="file-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
-                   <span class="file-name">Intake_Form.pdf</span>
-                   <button class="doc-dl-btn">Download</button>
-                 </li>
-              </ul>
+          </div>
+        </header>
+
+        <!-- KPI Grid -->
+        <section class="kpi-grid">
+          <div class="kpi-card">
+            <div class="kpi-icon case-icon">
+              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
             </div>
+             <div class="kpi-content">
+               <p class="kpi-label">Case Status</p>
+               <h3 class="kpi-value" id="kpi-status-text">Active</h3>
+             </div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-icon docs-icon">
+              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+            </div>
+             <div class="kpi-content">
+               <p class="kpi-label">Available Documents</p>
+               <h3 class="kpi-value">2 Files</h3>
+             </div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-icon msgs-icon">
+               <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+            </div>
+             <div class="kpi-content">
+               <p class="kpi-label">New Messages</p>
+               <h3 class="kpi-value">1 Unread</h3>
+             </div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-icon update-icon">
+               <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+            </div>
+             <div class="kpi-content">
+               <p class="kpi-label">Next Update Expected</p>
+               <h3 class="kpi-value">In 3 Days</h3>
+             </div>
           </div>
         </section>
 
-        <!-- Activity Timeline -->
-        <section class="panel side-panel">
-          <div class="panel-header">
-            <h2>Recent Activity</h2>
-          </div>
-          <div class="panel-body">
-             <ul class="timeline">
-                <li class="timeline-item">
-                  <span class="timeline-point bg-primary"></span>
-                  <div class="timeline-content">
-                     <strong>Case assigned to paralegal</strong>
-                     <span class="timeline-date">Today at 10:00 AM</span>
-                  </div>
-                </li>
-                <li class="timeline-item">
-                  <span class="timeline-point bg-success"></span>
-                  <div class="timeline-content">
-                     <strong>Initial review completed</strong>
-                     <span class="timeline-date">Yesterday</span>
-                  </div>
-                </li>
-                <li class="timeline-item">
-                  <span class="timeline-point bg-neutral"></span>
-                  <div class="timeline-content">
-                     <strong>Documents received</strong>
-                     <span class="timeline-date">Oct 12, 2023</span>
-                  </div>
-                </li>
-                <li class="timeline-item">
-                  <span class="timeline-point bg-neutral"></span>
-                  <div class="timeline-content">
-                     <strong>Account created</strong>
-                     <span class="timeline-date">Oct 10, 2023</span>
-                  </div>
-                </li>
-             </ul>
-          </div>
-        </section>
+        <!-- Main Panels -->
+        <div class="dashboard-panels">
+          
+          <!-- Case Summary -->
+          <section class="panel main-panel">
+            <div class="panel-header">
+              <h2>Case Summary</h2>
+            </div>
+            <div class="panel-body">
+              <div class="legal-summary-block">
+                <h4 class="summary-title">Current File Overview</h4>
+                <p id="case-summary" class="summary-text">Loading...</p>
+              </div>
+              
+              <!-- Quick Documents List embedded in summary -->
+              <div class="quick-documents mt-4">
+                <h4>Recent Documents</h4>
+                <ul class="clean-docs-list">
+                   <li>
+                     <svg class="file-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
+                     <span class="file-name">Client_Agreement.pdf</span>
+                     <button class="doc-dl-btn">Download</button>
+                   </li>
+                   <li>
+                     <svg class="file-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
+                     <span class="file-name">Intake_Form.pdf</span>
+                     <button class="doc-dl-btn">Download</button>
+                   </li>
+                </ul>
+              </div>
+            </div>
+          </section>
 
+          <!-- Activity Timeline -->
+          <section class="panel side-panel">
+            <div class="panel-header">
+              <h2>Recent Activity</h2>
+            </div>
+            <div class="panel-body">
+               <ul class="timeline">
+                  <li class="timeline-item">
+                    <span class="timeline-point bg-primary"></span>
+                    <div class="timeline-content">
+                       <strong>Case assigned to paralegal</strong>
+                       <span class="timeline-date">Today at 10:00 AM</span>
+                    </div>
+                  </li>
+                  <li class="timeline-item">
+                    <span class="timeline-point bg-success"></span>
+                    <div class="timeline-content">
+                       <strong>Initial review completed</strong>
+                       <span class="timeline-date">Yesterday</span>
+                    </div>
+                  </li>
+                  <li class="timeline-item">
+                    <span class="timeline-point bg-neutral"></span>
+                    <div class="timeline-content">
+                       <strong>Documents received</strong>
+                       <span class="timeline-date">Oct 12, 2023</span>
+                    </div>
+                  </li>
+                  <li class="timeline-item">
+                    <span class="timeline-point bg-neutral"></span>
+                    <div class="timeline-content">
+                       <strong>Account created</strong>
+                       <span class="timeline-date">Oct 10, 2023</span>
+                    </div>
+                  </li>
+               </ul>
+            </div>
+          </section>
+        </div>
       </div>
+
+      <!-- Settings / My Cases View -->
+      <div id="view-cases" style="display: none;">
+        <header class="dashboard-page-header">
+          <div class="header-titles">
+            <h1>My Cases</h1>
+            <p class="subtitle">A complete overview of your legal matters.</p>
+          </div>
+        </header>
+
+        <section class="panel main-panel">
+          <div class="panel-body" id="cases-list-container">
+            <!-- Render cases here -->
+            <p style="text-align: center; color: var(--text-muted); padding: 40px 0;">Loading cases...</p>
+          </div>
+        </section>
+      </div>
+
     </main>
   </div>
 </div>

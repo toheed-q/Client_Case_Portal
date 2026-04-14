@@ -42,3 +42,33 @@ export async function getCaseByUserId(userId: string): Promise<Case | null> {
     throw error;
   }
 }
+
+/**
+ * Retrieves all cases associated with a particular user.
+ * 
+ * @param userId - The authenticated user's ID
+ * @returns Array of Case objects. Empty array if none found.
+ */
+export async function getAllCasesByUserId(userId: string): Promise<Case[]> {
+  try {
+    const casesRef = collection(db, 'cases');
+    const q = query(casesRef, where('userId', '==', userId));
+    const snapshot = await getDocs(q);
+
+    if (snapshot.empty) {
+      return [];
+    }
+
+    return snapshot.docs.map(docSnap => {
+      const docData = docSnap.data();
+      return {
+        userId: docData.userId,
+        caseStage: docData.caseStage,
+        statusSummary: docData.statusSummary
+      } as Case;
+    });
+  } catch (error) {
+    console.error('Error fetching all cases by user ID:', error);
+    throw error;
+  }
+}
