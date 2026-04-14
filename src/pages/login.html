@@ -1,0 +1,50 @@
+<div class="auth-container">
+  <div class="auth-card">
+    <div class="auth-header">
+      <h2>Client Portal</h2>
+      <p id="auth-subtitle">Sign in to access your account</p>
+    </div>
+    
+    <div class="auth-tabs">
+      <button class="tab-btn active" id="tab-login">Login</button>
+      <button class="tab-btn" id="tab-signup">Sign Up</button>
+    </div>
+
+    <form id="auth-form" class="auth-form">
+      <!-- Error messages container -->
+      <div id="auth-error" class="error-message" style="display: none;"></div>
+
+      <div class="input-group signup-only" id="group-fullname" style="display: none;">
+        <label for="fullname">Full name</label>
+        <div class="input-wrapper">
+          <input type="text" id="fullname" name="fullname" placeholder="John Doe" />
+        </div>
+      </div>
+
+      <div class="input-group">
+        <label for="email">Email address</label>
+        <div class="input-wrapper">
+          <input type="email" id="email" name="email" placeholder="you@example.com" required />
+        </div>
+      </div>
+      
+      <div class="input-group">
+        <label for="password">Password</label>
+        <div class="input-wrapper">
+          <input type="password" id="password" name="password" placeholder="••••••••" required minlength="6" />
+        </div>
+      </div>
+
+      <div class="input-group signup-only" id="group-confirm-password" style="display: none;">
+        <label for="confirm-password">Confirm Password</label>
+        <div class="input-wrapper">
+          <input type="password" id="confirm-password" name="confirm-password" placeholder="••••••••" minlength="6" />
+        </div>
+      </div>
+      
+      <button type="submit" id="auth-submit-btn" class="primary-btn submit-btn">
+        Sign In
+      </button>
+    </form>
+  </div>
+</div>
