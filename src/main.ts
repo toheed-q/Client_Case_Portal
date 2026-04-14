@@ -136,6 +136,11 @@ function setupAuthEvents(): void {
           friendlyMessage = 'Invalid email format';
         } else if (error.code === 'auth/invalid-credential' || error.code === 'auth/wrong-password' || error.code === 'auth/user-not-found') {
           friendlyMessage = 'Invalid email or password';
+        } else if (error.code === 'auth/operation-not-allowed') {
+          friendlyMessage = 'Sign-up is not allowed. Please enable Email/Password auth in Firebase Console.';
+        } else {
+          // Expose raw error for debugging unsupported codes
+          friendlyMessage = `Error: ${error.message} (${error.code})`;
         }
 
         // Show error message
