@@ -5,7 +5,7 @@ import {
   onAuthStateChanged
 } from "firebase/auth";
 import type { User } from "firebase/auth";
-import { doc, setDoc } from "firebase/firestore";
+import { doc, setDoc, getDoc } from "firebase/firestore";
 import { auth, db } from "./firebase";
 
 /**
@@ -88,4 +88,20 @@ export function listenToAuthChanges(callback: (user: User | null) => void) {
  */
 export function getCurrentUser(): User | null {
   return auth.currentUser;
+}
+
+/**
+ * Retrieves the user's full profile from Firestore
+ */
+export async function getUserProfile(uid: string): Promise<{ fullName?: string, role?: string } | null> {
+  try {
+    const docSnap = await getDoc(doc(db, "users", uid));
+    if (docSnap.exists()) {
+      return docSnap.data() as { fullName?: string, role?: string };
+    }
+    return null;
+  } catch (error) {
+    console.error("Error fetching user profile:", error);
+    return null;
+  }
 }

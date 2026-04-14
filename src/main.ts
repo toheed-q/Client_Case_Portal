@@ -5,7 +5,7 @@
 
 // Initialize Firebase
 import './services/firebase';
-import { login, logout, listenToAuthChanges, getCurrentUser, register } from './services/authService';
+import { login, logout, listenToAuthChanges, getCurrentUser, register, getUserProfile } from './services/authService';
 import { getCaseByUserId } from './services/caseService';
 
 // Internal auth state tracker mapped to the latest Firebase state
@@ -158,51 +158,73 @@ function setupAuthEvents(): void {
  */
 async function setupDashboardEvents(): Promise<void> {
   const logoutBtn = document.getElementById('logout-btn') as HTMLButtonElement | null;
+  const mobileMenuBtn = document.getElementById('mobile-menu-btn') as HTMLButtonElement | null;
+  const sidebar = document.getElementById('sidebar');
+  const closeSidebarBtn = document.getElementById('close-sidebar-btn');
   
   if (logoutBtn) {
     logoutBtn.addEventListener('click', async () => {
       try {
         await logout();
-        // On success, the onAuthStateChangedListener will detect the change and route to login
       } catch (error) {
         console.error('Error during logout:', error);
       }
     });
   }
 
-  // Load and render Case Information securely
-  const caseStageEl = document.getElementById('case-stage');
-  const caseSummaryEl = document.getElementById('case-summary');
+  // Sidebar mobile toggle
+  if (mobileMenuBtn && sidebar && closeSidebarBtn) {
+    mobileMenuBtn.addEventListener('click', () => {
+      sidebar.classList.add('open');
+    });
+    closeSidebarBtn.addEventListener('click', () => {
+      sidebar.classList.remove('open');
+    });
+  }
 
-  if (caseStageEl && caseSummaryEl) {
-    const user = getCurrentUser();
+  // Bind Navbar and Header Data
+  const user = getCurrentUser();
+  if (user) {
+    const navEmail = document.getElementById('nav-email');
+    const navAvatar = document.getElementById('nav-avatar');
+    const welcomeText = document.getElementById('welcome-text');
+
+    if (navEmail) navEmail.textContent = user.email || 'user@example.com';
     
-    if (!user) {
-      caseStageEl.textContent = 'Error';
-      caseSummaryEl.textContent = 'No user session found.';
-      return;
+    // Fetch user profile from Firestore to get full name
+    try {
+      const profile = await getUserProfile(user.uid);
+      const displayName = profile?.fullName || user.email?.split('@')[0] || 'Client';
+      
+      if (welcomeText) welcomeText.textContent = `Welcome back, ${displayName}`;
+      if (navAvatar) navAvatar.textContent = displayName.charAt(0).toUpperCase();
+
+    } catch (e) {
+      console.error('Failed to load user profile details:', e);
     }
 
+    // Load Case Information
     try {
       const caseData = await getCaseByUserId(user.uid);
-      
+      const caseStageEl = document.getElementById('case-stage');
+      const caseSummaryEl = document.getElementById('case-summary');
+      const kpiStatusText = document.getElementById('kpi-status-text');
+
       if (!caseData) {
-        caseStageEl.innerHTML = '<span style="color: #ef4444; font-weight: 500;">No case found</span>';
-        caseSummaryEl.textContent = 'We could not locate an active case for your account.';
+        if (caseStageEl) caseStageEl.textContent = 'No Case Found';
+        if (caseSummaryEl) caseSummaryEl.textContent = 'We could not locate an active case for your account.';
+        if (kpiStatusText) kpiStatusText.textContent = 'Inactive';
       } else {
-        // Create an elegant stage tracker display
-        caseStageEl.innerHTML = `
-          <div class="stage active" style="margin: 0; display: inline-block;">${caseData.caseStage}</div>
-        `;
-        caseSummaryEl.textContent = caseData.statusSummary;
+        if (caseStageEl) caseStageEl.innerHTML = `Case Stage: <strong>${caseData.caseStage}</strong>`;
+        if (caseSummaryEl) caseSummaryEl.textContent = caseData.statusSummary;
+        if (kpiStatusText) kpiStatusText.textContent = caseData.caseStage;
       }
     } catch (error) {
       console.error('Error fetching dashboard case details:', error);
-      caseStageEl.innerHTML = '<span style="color: #ef4444; font-weight: 500;">Error</span>';
-      caseSummaryEl.textContent = 'Failed to load case data. Please try again later.';
     }
   }
 }
+
 
 // Initial script execution: Setup Firebase Auth Listener
 // This listener runs automatically on page load and on any sign-in/sign-out events

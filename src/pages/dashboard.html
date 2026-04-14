@@ -1,27 +1,191 @@
-<div class="dashboard-container">
-  <header class="dashboard-header">
-    <h1>Client Dashboard</h1>
-    <button id="logout-btn" class="secondary-btn">Logout</button>
-  </header>
-  <main class="dashboard-main">
-    <section class="dashboard-section card">
-      <h2>Case Stage</h2>
-      <div id="case-stage">
-        Loading...
-      </div>
-    </section>
-    
-    <section class="dashboard-section card">
-      <h2>Status Summary</h2>
-      <p id="case-summary">Loading...</p>
-    </section>
+<div class="app-layout">
+  <!-- Sidebar -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <div class="logo">LegalPortal</div>
+      <button class="close-sidebar-btn" id="close-sidebar-btn">&times;</button>
+    </div>
+    <nav class="sidebar-nav">
+      <a href="#" class="nav-item active">
+        <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
+        Dashboard
+      </a>
+      <a href="#" class="nav-item">
+        <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+        My Case
+      </a>
+      <a href="#" class="nav-item">
+        <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7v8a2 2 0 002 2h6M8 7V5a2 2 0 012-2h4.586a1 1 0 01.707.293l4.414 4.414a1 1 0 01.293.707V15a2 2 0 01-2 2h-2M8 7H6a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2v-2"></path></svg>
+        Documents
+      </a>
+      <a href="#" class="nav-item">
+        <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"></path></svg>
+        Messages
+      </a>
+      <a href="#" class="nav-item">
+        <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+        Settings
+      </a>
+    </nav>
+  </aside>
 
-    <section class="dashboard-section card">
-      <h2>Documents</h2>
-      <ul class="document-list">
-        <li><span>Client_Agreement.pdf</span> <button class="link-btn">View</button></li>
-        <li><span>Intake_Form.pdf</span> <button class="link-btn">View</button></li>
-      </ul>
-    </section>
-  </main>
+  <!-- Main Area -->
+  <div class="main-content">
+    <!-- Navbar -->
+    <nav class="top-navbar">
+      <div class="nav-left">
+        <button class="mobile-menu-btn" id="mobile-menu-btn">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+        </button>
+        <span class="nav-brand-mobile">LegalPortal</span>
+      </div>
+      <div class="nav-right">
+        <div class="nav-notifications">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path></svg>
+          <span class="notification-dot"></span>
+        </div>
+        <div class="nav-profile">
+          <div class="profile-avatar" id="nav-avatar">U</div>
+          <div class="profile-info">
+            <span class="profile-email" id="nav-email">user@example.com</span>
+          </div>
+          <button id="logout-btn" class="logout-btn">
+             <!-- Logout icon -->
+             <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+          </button>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Dashboard Content -->
+    <main class="dashboard-wrapper">
+      
+      <!-- Welcome Header -->
+      <header class="dashboard-page-header">
+        <div class="header-titles">
+          <h1 id="welcome-text">Welcome back, Client</h1>
+          <p class="subtitle">Here is the latest status of your case.</p>
+        </div>
+        <div class="header-actions">
+          <div class="stage-badge" id="case-stage">
+            Loading...
+          </div>
+        </div>
+      </header>
+
+      <!-- KPI Grid -->
+      <section class="kpi-grid">
+        <div class="kpi-card">
+          <div class="kpi-icon case-icon">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+          </div>
+           <div class="kpi-content">
+             <p class="kpi-label">Case Status</p>
+             <h3 class="kpi-value" id="kpi-status-text">Active</h3>
+           </div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-icon docs-icon">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+          </div>
+           <div class="kpi-content">
+             <p class="kpi-label">Available Documents</p>
+             <h3 class="kpi-value">2 Files</h3>
+           </div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-icon msgs-icon">
+             <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+          </div>
+           <div class="kpi-content">
+             <p class="kpi-label">New Messages</p>
+             <h3 class="kpi-value">1 Unread</h3>
+           </div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-icon update-icon">
+             <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+          </div>
+           <div class="kpi-content">
+             <p class="kpi-label">Next Update Expected</p>
+             <h3 class="kpi-value">In 3 Days</h3>
+           </div>
+        </div>
+      </section>
+
+      <!-- Main Panels -->
+      <div class="dashboard-panels">
+        
+        <!-- Case Summary -->
+        <section class="panel main-panel">
+          <div class="panel-header">
+            <h2>Case Summary</h2>
+          </div>
+          <div class="panel-body">
+            <div class="legal-summary-block">
+              <h4 class="summary-title">Current File Overview</h4>
+              <p id="case-summary" class="summary-text">Loading...</p>
+            </div>
+            
+            <!-- Quick Documents List embedded in summary -->
+            <div class="quick-documents mt-4">
+              <h4>Recent Documents</h4>
+              <ul class="clean-docs-list">
+                 <li>
+                   <svg class="file-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
+                   <span class="file-name">Client_Agreement.pdf</span>
+                   <button class="doc-dl-btn">Download</button>
+                 </li>
+                 <li>
+                   <svg class="file-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
+                   <span class="file-name">Intake_Form.pdf</span>
+                   <button class="doc-dl-btn">Download</button>
+                 </li>
+              </ul>
+            </div>
+          </div>
+        </section>
+
+        <!-- Activity Timeline -->
+        <section class="panel side-panel">
+          <div class="panel-header">
+            <h2>Recent Activity</h2>
+          </div>
+          <div class="panel-body">
+             <ul class="timeline">
+                <li class="timeline-item">
+                  <span class="timeline-point bg-primary"></span>
+                  <div class="timeline-content">
+                     <strong>Case assigned to paralegal</strong>
+                     <span class="timeline-date">Today at 10:00 AM</span>
+                  </div>
+                </li>
+                <li class="timeline-item">
+                  <span class="timeline-point bg-success"></span>
+                  <div class="timeline-content">
+                     <strong>Initial review completed</strong>
+                     <span class="timeline-date">Yesterday</span>
+                  </div>
+                </li>
+                <li class="timeline-item">
+                  <span class="timeline-point bg-neutral"></span>
+                  <div class="timeline-content">
+                     <strong>Documents received</strong>
+                     <span class="timeline-date">Oct 12, 2023</span>
+                  </div>
+                </li>
+                <li class="timeline-item">
+                  <span class="timeline-point bg-neutral"></span>
+                  <div class="timeline-content">
+                     <strong>Account created</strong>
+                     <span class="timeline-date">Oct 10, 2023</span>
+                  </div>
+                </li>
+             </ul>
+          </div>
+        </section>
+
+      </div>
+    </main>
+  </div>
 </div>
