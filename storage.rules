@@ -1,0 +1,25 @@
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+
+    // ── User Document Storage ──────────────────────────────────────
+    // Path: documents/{userId}/{fileName}
+    //
+    // Clients: can only READ their own files.
+    // Admins:  can read and WRITE (upload) files for any user.
+    //
+    // TODO: Replace admin uploads with webhook (Zapier) or Clio document sync via Cloud Functions
+
+    match /documents/{userId}/{fileName} {
+      // Clients read their own files; admins can read any file
+      allow read: if request.auth != null &&
+                     (request.auth.uid == userId ||
+                      firestore.get(/databases/(default)/documents/users/$(request.auth.uid)).data.role == 'admin');
+
+      // Only admins may upload files
+      allow write: if request.auth != null &&
+                      firestore.get(/databases/(default)/documents/users/$(request.auth.uid)).data.role == 'admin';
+    }
+
+  }
+}
