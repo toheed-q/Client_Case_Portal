@@ -68,15 +68,17 @@ async function router(): Promise<void> {
     return;
   }
 
-  // Fetch role — this drives the entire routing decision
+  // Fetch role — single call drives both routing AND navbar badge
   const role = await getUserRole(user.uid);
+  console.log('USER:', user.uid, user.email);
+  console.log('ROLE:', role);
 
   if (role === 'admin') {
     await loadView('admin', appElement);
-    await setupAdminEvents();
+    await setupAdminEvents(role);
   } else {
     await loadView('dashboard', appElement);
-    await setupDashboardEvents();
+    await setupDashboardEvents(role);
   }
 }
 
@@ -210,7 +212,7 @@ function showAuthError(el: HTMLElement, msg: string): void {
 // CLIENT DASHBOARD EVENTS
 // ─────────────────────────────────────────────
 
-async function setupDashboardEvents(): Promise<void> {
+async function setupDashboardEvents(role: 'admin' | 'client'): Promise<void> {
   const logoutBtn = document.getElementById('logout-btn') as HTMLButtonElement | null;
   const mobileMenuBtn = document.getElementById('mobile-menu-btn') as HTMLButtonElement | null;
   const sidebar = document.getElementById('sidebar');
@@ -235,6 +237,10 @@ async function setupDashboardEvents(): Promise<void> {
   const navAvatar = document.getElementById('nav-avatar');
   const welcomeText = document.getElementById('welcome-text');
   if (navEmail) navEmail.textContent = user.email || '';
+  if (role === 'admin') {
+    const badge = document.getElementById('nav-role-badge');
+    if (badge) badge.style.display = 'inline-block';
+  }
 
   // Parallelize data fetches
   const profilePromise = getUserProfile(user.uid);
@@ -328,7 +334,7 @@ async function renderCasesList(userId: string): Promise<void> {
 // ADMIN DASHBOARD EVENTS
 // ─────────────────────────────────────────────
 
-async function setupAdminEvents(): Promise<void> {
+async function setupAdminEvents(role: 'admin' | 'client'): Promise<void> {
   // Sidebar mobile toggle
   const mobileMenuBtn = document.getElementById('admin-mobile-menu-btn');
   const sidebar = document.getElementById('admin-sidebar');
@@ -353,6 +359,10 @@ async function setupAdminEvents(): Promise<void> {
     if (navEmail) navEmail.textContent = user.email || '';
     const navAvatar = document.getElementById('admin-nav-avatar');
     if (navAvatar) navAvatar.textContent = (user.email?.charAt(0) || 'A').toUpperCase();
+    if (role === 'admin') {
+      const badge = document.getElementById('admin-role-badge');
+      if (badge) badge.style.display = 'inline-block';
+    }
   }
 
   // Section Navigation
@@ -692,13 +702,21 @@ function escapeHtml(str: string): string {
 // Bootstrap
 // ─────────────────────────────────────────────
 
+let isRouting = false;
+
 function initializeApp() {
   console.log('Initializing App...');
-  listenToAuthChanges(user => {
-    console.log('Auth state changed. User:', user?.email || 'Logged Out');
-    isUserAuthenticated = !!user;
-    currentView = null; // Force view re-render on auth change
-    router();
+  listenToAuthChanges(async user => {
+    if (isRouting) return;
+    isRouting = true;
+    try {
+      console.log('Auth state changed. User:', user?.email || 'Logged Out');
+      isUserAuthenticated = !!user;
+      currentView = null;
+      await router();
+    } finally {
+      isRouting = false;
+    }
   });
 }
 

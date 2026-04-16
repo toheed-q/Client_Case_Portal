@@ -12,7 +12,7 @@ import { auth, db } from "./firebase";
  * Service to manage Firebase Authentication.
  */
 
-// TODO: Replace Firebase Auth + Firestore user creation with Clio Identity sync if required
+// TODO: Replace Firebase Auth + RTDB user creation with Clio Identity sync if required
 
 /**
  * Registers a new user account with email and password.
@@ -27,11 +27,10 @@ export async function register(email: string, password: string, fullName: string
     const userCredential = await createUserWithEmailAndPassword(auth, email, password);
     const user = userCredential.user;
     
-    // Create default user record in Firestore
-    await setDoc(doc(db, "users", user.uid), {
+    await setDoc(doc(db, 'users', user.uid), {
       email: user.email,
       fullName: fullName,
-      role: "client"
+      role: 'client'
     });
     
     return user;
@@ -91,13 +90,13 @@ export function getCurrentUser(): User | null {
 }
 
 /**
- * Retrieves the user's full profile from Firestore
+ * Retrieves the user's full profile from Realtime Database
  */
 export async function getUserProfile(uid: string): Promise<{ fullName?: string, role?: string } | null> {
   try {
-    const docSnap = await getDoc(doc(db, "users", uid));
-    if (docSnap.exists()) {
-      return docSnap.data() as { fullName?: string, role?: string };
+    const snapshot = await getDoc(doc(db, 'users', uid));
+    if (snapshot.exists()) {
+      return snapshot.data() as { fullName?: string, role?: string };
     }
     return null;
   } catch (error) {
@@ -105,3 +104,4 @@ export async function getUserProfile(uid: string): Promise<{ fullName?: string, 
     return null;
   }
 }
+

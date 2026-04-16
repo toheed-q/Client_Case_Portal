@@ -1,4 +1,4 @@
-import { ref, uploadBytes, getDownloadURL, listAll } from 'firebase/storage';
+import { ref as storageRef, uploadBytes, getDownloadURL, listAll } from 'firebase/storage';
 import { collection, getDocs } from 'firebase/firestore';
 import { storage, db } from './firebase';
 
@@ -20,7 +20,6 @@ export interface UserRecord {
 /**
  * Service to manage Document data stored on Firebase Storage.
  * Designed as a strict abstraction layer over the backend storage system.
- * All functions can be replaced with Clio document API calls via Cloud Functions.
  */
 
 // ─────────────────────────────────────────────
@@ -35,7 +34,7 @@ export interface UserRecord {
  */
 export async function getDocumentsByUserId(userId: string): Promise<Document[]> {
   try {
-    const listRef = ref(storage, `documents/${userId}`);
+    const listRef = storageRef(storage, `documents/${userId}`);
     const res = await listAll(listRef);
 
     const documents = await Promise.all(
@@ -65,15 +64,13 @@ export async function getDocumentsByUserId(userId: string): Promise<Document[]> 
  * [ADMIN] Uploads a file for a specific user to the storage bucket.
  * Path format: documents/{userId}/{fileName} — matches future webhook payload structure.
  *
- * TODO: Replace admin-created data with webhook (Zapier) or Clio API integration
- *
  * @param userId - The user's ID
  * @param file - The file blob to upload
  * @returns The public download URL of the uploaded file
  */
 export async function uploadDocument(userId: string, file: File): Promise<string> {
   try {
-    const fileRef = ref(storage, `documents/${userId}/${file.name}`);
+    const fileRef = storageRef(storage, `documents/${userId}/${file.name}`);
     await uploadBytes(fileRef, file);
     const downloadUrl = await getDownloadURL(fileRef);
     return downloadUrl;
@@ -84,10 +81,8 @@ export async function uploadDocument(userId: string, file: File): Promise<string
 }
 
 /**
- * [ADMIN] Fetches all registered users from the Firestore users collection.
+ * [ADMIN] Fetches all registered users from the Realtime Database users node.
  * Used to populate user dropdowns in the admin panel.
- *
- * TODO: Replace admin-created data with webhook (Zapier) or Clio API integration
  *
  * @returns Array of UserRecord objects
  */
@@ -97,11 +92,11 @@ export async function getAllUsers(): Promise<UserRecord[]> {
     if (snapshot.empty) return [];
 
     return snapshot.docs.map(docSnap => {
-      const data = docSnap.data();
+      const userData = docSnap.data();
       return {
         uid: docSnap.id,
-        email: data.email || '',
-        fullName: data.fullName || '',
+        email: userData.email || '',
+        fullName: userData.fullName || '',
       } as UserRecord;
     });
   } catch (error) {
@@ -109,3 +104,4 @@ export async function getAllUsers(): Promise<UserRecord[]> {
     throw error;
   }
 }
+

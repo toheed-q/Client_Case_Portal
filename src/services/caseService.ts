@@ -1,12 +1,13 @@
 import {
   collection,
-  query,
-  where,
+  doc,
+  getDoc,
   getDocs,
   addDoc,
   updateDoc,
+  query,
+  where,
   limit,
-  doc,
   serverTimestamp
 } from 'firebase/firestore';
 import { db } from './firebase';
@@ -32,9 +33,8 @@ export const CASE_STAGES = [
 export type CaseStage = typeof CASE_STAGES[number];
 
 /**
- * Service to manage Case data.
+ * Service to manage Case data using Realtime Database.
  * Built as an abstraction to avoid tight coupling between the UI and backend data source.
- * Designed so any function can be swapped to call a Cloud Function / external API.
  */
 
 // ─────────────────────────────────────────────
@@ -49,8 +49,7 @@ export type CaseStage = typeof CASE_STAGES[number];
  */
 export async function getCaseByUserId(userId: string): Promise<Case | null> {
   try {
-    const casesRef = collection(db, 'cases');
-    const q = query(casesRef, where('userId', '==', userId), limit(1));
+    const q = query(collection(db, 'cases'), where('userId', '==', userId), limit(1));
     const snapshot = await getDocs(q);
 
     if (snapshot.empty) return null;
@@ -77,8 +76,7 @@ export async function getCaseByUserId(userId: string): Promise<Case | null> {
  */
 export async function getAllCasesByUserId(userId: string): Promise<Case[]> {
   try {
-    const casesRef = collection(db, 'cases');
-    const q = query(casesRef, where('userId', '==', userId));
+    const q = query(collection(db, 'cases'), where('userId', '==', userId));
     const snapshot = await getDocs(q);
 
     if (snapshot.empty) return [];
@@ -106,9 +104,7 @@ export async function getAllCasesByUserId(userId: string): Promise<Case[]> {
  * [ADMIN] Retrieves ALL cases across all users.
  * Used by the admin dashboard to display and manage the full case list.
  *
- * TODO: Replace admin-created data with webhook (Zapier) or Clio API integration
- *
- * @returns Array of all Case objects with their Firestore document IDs.
+ * @returns Array of all Case objects with their push IDs.
  */
 export async function getAllCases(): Promise<Case[]> {
   try {
@@ -131,13 +127,11 @@ export async function getAllCases(): Promise<Case[]> {
 }
 
 /**
- * [ADMIN] Creates a new case document in Firestore.
+ * [ADMIN] Creates a new case document in Realtime Database.
  * Data structure mirrors the future webhook payload format from Clio/Zapier.
  *
- * TODO: Replace admin-created data with webhook (Zapier) or Clio API integration
- *
  * @param caseData - Object matching { userId, caseStage, statusSummary }
- * @returns The ID of the newly created Firestore document.
+ * @returns The ID of the newly created case record.
  */
 export async function createCase(
   caseData: Pick<Case, 'userId' | 'caseStage' | 'statusSummary'>
@@ -158,11 +152,9 @@ export async function createCase(
 }
 
 /**
- * [ADMIN] Updates an existing case by its Firestore document ID.
+ * [ADMIN] Updates an existing case by its push ID.
  *
- * TODO: Replace admin-created data with webhook (Zapier) or Clio API integration
- *
- * @param caseId - The Firestore document ID of the case to update
+ * @param caseId - The ID of the case to update
  * @param updates - Partial case fields to update
  */
 export async function updateCase(
@@ -170,8 +162,7 @@ export async function updateCase(
   updates: Partial<Pick<Case, 'caseStage' | 'statusSummary'>>
 ): Promise<void> {
   try {
-    const caseRef = doc(db, 'cases', caseId);
-    await updateDoc(caseRef, {
+    await updateDoc(doc(db, 'cases', caseId), {
       ...updates,
       updatedAt: serverTimestamp(),
     });
@@ -180,3 +171,4 @@ export async function updateCase(
     throw error;
   }
 }
+

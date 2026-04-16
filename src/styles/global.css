@@ -467,6 +467,19 @@ body {
   color: var(--text-primary);
 }
 
+.nav-role-badge {
+  display: inline-block;
+  padding: 2px 7px;
+  background: #1e3a5f;
+  color: #60a5fa;
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  border-radius: 20px;
+  border: 1px solid rgba(96, 165, 250, 0.3);
+}
+
 .logout-btn {
   background: transparent;
   border: none;
