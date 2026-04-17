@@ -71,7 +71,14 @@ export async function getDocumentsByUserId(userId: string): Promise<Document[]> 
 export async function uploadDocument(userId: string, file: File): Promise<string> {
   try {
     const fileRef = storageRef(storage, `documents/${userId}/${file.name}`);
-    await uploadBytes(fileRef, file);
+    const metadata = {
+      contentType: file.type,
+      customMetadata: {
+        uploadedBy: 'admin',
+        uploadedAt: new Date().toISOString(),
+      },
+    };
+    await uploadBytes(fileRef, file, metadata);
     const downloadUrl = await getDownloadURL(fileRef);
     return downloadUrl;
   } catch (error) {

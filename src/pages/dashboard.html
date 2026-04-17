@@ -14,7 +14,7 @@
         <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
         My Case
       </a>
-      <a href="#" class="nav-item">
+      <a href="#" class="nav-item" id="nav-link-documents">
         <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7v8a2 2 0 002 2h6M8 7V5a2 2 0 012-2h4.586a1 1 0 01.707.293l4.414 4.414a1 1 0 01.293.707V15a2 2 0 01-2 2h-2M8 7H6a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2v-2"></path></svg>
         Documents
       </a>
@@ -93,7 +93,7 @@
             </div>
              <div class="kpi-content">
                <p class="kpi-label">Available Documents</p>
-               <h3 class="kpi-value">2 Files</h3>
+               <h3 class="kpi-value" id="kpi-docs-count">—</h3>
              </div>
           </div>
           <div class="kpi-card">
@@ -101,8 +101,8 @@
                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
             </div>
              <div class="kpi-content">
-               <p class="kpi-label">New Messages</p>
-               <h3 class="kpi-value">1 Unread</h3>
+               <p class="kpi-label">Case Stage</p>
+               <h3 class="kpi-value" id="kpi-stage-text">—</h3>
              </div>
           </div>
           <div class="kpi-card">
@@ -110,8 +110,8 @@
                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
             </div>
              <div class="kpi-content">
-               <p class="kpi-label">Next Update Expected</p>
-               <h3 class="kpi-value">In 3 Days</h3>
+               <p class="kpi-label">Last Updated</p>
+               <h3 class="kpi-value" id="kpi-updated-text">—</h3>
              </div>
           </div>
         </section>
@@ -130,21 +130,10 @@
                 <p id="case-summary" class="summary-text">Loading...</p>
               </div>
               
-              <!-- Quick Documents List embedded in summary -->
+              <!-- Documents list from Firebase Storage -->
               <div class="quick-documents mt-4">
                 <h4>Recent Documents</h4>
-                <ul class="clean-docs-list">
-                   <li>
-                     <svg class="file-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
-                     <span class="file-name">Client_Agreement.pdf</span>
-                     <button class="doc-dl-btn">Download</button>
-                   </li>
-                   <li>
-                     <svg class="file-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
-                     <span class="file-name">Intake_Form.pdf</span>
-                     <button class="doc-dl-btn">Download</button>
-                   </li>
-                </ul>
+                <ul class="clean-docs-list" id="docs-list"><li style="color:var(--text-muted);padding:12px 0;">Loading documents...</li></ul>
               </div>
             </div>
           </section>
@@ -152,42 +141,28 @@
           <!-- Activity Timeline -->
           <section class="panel side-panel">
             <div class="panel-header">
-              <h2>Recent Activity</h2>
+              <h2>Case Activity</h2>
             </div>
             <div class="panel-body">
-               <ul class="timeline">
-                  <li class="timeline-item">
-                    <span class="timeline-point bg-primary"></span>
-                    <div class="timeline-content">
-                       <strong>Case assigned to paralegal</strong>
-                       <span class="timeline-date">Today at 10:00 AM</span>
-                    </div>
-                  </li>
-                  <li class="timeline-item">
-                    <span class="timeline-point bg-success"></span>
-                    <div class="timeline-content">
-                       <strong>Initial review completed</strong>
-                       <span class="timeline-date">Yesterday</span>
-                    </div>
-                  </li>
-                  <li class="timeline-item">
-                    <span class="timeline-point bg-neutral"></span>
-                    <div class="timeline-content">
-                       <strong>Documents received</strong>
-                       <span class="timeline-date">Oct 12, 2023</span>
-                    </div>
-                  </li>
-                  <li class="timeline-item">
-                    <span class="timeline-point bg-neutral"></span>
-                    <div class="timeline-content">
-                       <strong>Account created</strong>
-                       <span class="timeline-date">Oct 10, 2023</span>
-                    </div>
-                  </li>
-               </ul>
+               <ul class="timeline" id="activity-timeline"><li style="color:var(--text-muted);padding:12px 0;">Loading...</li></ul>
             </div>
           </section>
         </div>
+      </div>
+
+      <!-- Documents View -->
+      <div id="view-documents" style="display:none;">
+        <header class="dashboard-page-header">
+          <div class="header-titles">
+            <h1>My Documents</h1>
+            <p class="subtitle">Files uploaded by your legal team. <!-- TODO: Replace with Clio API document sync --></p>
+          </div>
+        </header>
+        <section class="panel main-panel">
+          <div class="panel-body" id="documents-view-container">
+            <p style="text-align:center;color:var(--text-muted);padding:40px 0;">Loading documents...</p>
+          </div>
+        </section>
       </div>
 
       <!-- Settings / My Cases View -->

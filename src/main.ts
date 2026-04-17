@@ -33,6 +33,7 @@ import type { Case } from './services/caseService';
 import {
   uploadDocument,
   getAllUsers,
+  getDocumentsByUserId,
 } from './services/documentService';
 
 import { getUserRole } from './services/roleService';
@@ -242,9 +243,10 @@ async function setupDashboardEvents(role: 'admin' | 'client'): Promise<void> {
     if (badge) badge.style.display = 'inline-block';
   }
 
-  // Parallelize data fetches
+  // Fetch all data in parallel
   const profilePromise = getUserProfile(user.uid);
   const casePromise = getCaseByUserId(user.uid);
+  const docsPromise = getDocumentsByUserId(user.uid);
 
   profilePromise.then(profile => {
     const displayName = profile?.fullName || user.email?.split('@')[0] || 'Client';
@@ -256,40 +258,104 @@ async function setupDashboardEvents(role: 'admin' | 'client'): Promise<void> {
     const caseStageEl = document.getElementById('case-stage');
     const caseSummaryEl = document.getElementById('case-summary');
     const kpiStatusText = document.getElementById('kpi-status-text');
+    const kpiStageText = document.getElementById('kpi-stage-text');
+    const kpiUpdatedText = document.getElementById('kpi-updated-text');
+    const timeline = document.getElementById('activity-timeline');
 
     if (!caseData) {
       if (caseStageEl) caseStageEl.textContent = 'No Case Found';
       if (caseSummaryEl) caseSummaryEl.textContent = 'We could not locate an active case for your account.';
       if (kpiStatusText) kpiStatusText.textContent = 'Inactive';
+      if (kpiStageText) kpiStageText.textContent = 'N/A';
+      if (kpiUpdatedText) kpiUpdatedText.textContent = 'N/A';
+      if (timeline) timeline.innerHTML = `<li style="color:var(--text-muted);padding:12px 0;">No case activity yet.</li>`;
     } else {
-      if (caseStageEl) caseStageEl.innerHTML = `Case Stage: <strong>${caseData.caseStage}</strong>`;
+      if (caseStageEl) caseStageEl.innerHTML = `Case Stage: <strong>${escapeHtml(caseData.caseStage)}</strong>`;
       if (caseSummaryEl) caseSummaryEl.textContent = caseData.statusSummary;
-      if (kpiStatusText) kpiStatusText.textContent = caseData.caseStage;
+      if (kpiStatusText) kpiStatusText.textContent = caseData.caseStage === 'Case Closed' ? 'Closed' : 'Active';
+      if (kpiStageText) kpiStageText.textContent = caseData.caseStage;
+      if (kpiUpdatedText) {
+        const updatedAt = (caseData as any).updatedAt;
+        if (updatedAt?.toDate) {
+          kpiUpdatedText.textContent = updatedAt.toDate().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+        } else {
+          kpiUpdatedText.textContent = 'Recently';
+        }
+      }
+      if (timeline) {
+        const currentStageIndex = CASE_STAGES.indexOf(caseData.caseStage as any);
+        timeline.innerHTML = CASE_STAGES.map((stage, index) => {
+          let pointClass = 'bg-neutral';
+          let isActive = false;
+          if (index < currentStageIndex)      pointClass = 'bg-success';
+          else if (index === currentStageIndex) { pointClass = 'bg-primary'; isActive = true; }
+          return `
+            <li class="timeline-item">
+              <span class="timeline-point ${pointClass}"></span>
+              <div class="timeline-content">
+                <strong style="${isActive ? 'color:var(--gold-accent);' : ''}">${escapeHtml(stage)}</strong>
+                ${isActive ? `<span class="timeline-date">${escapeHtml(caseData.statusSummary)}</span>` : ''}
+              </div>
+            </li>`;
+        }).join('');
+      }
     }
   }).catch(e => console.error('Case data load error:', e));
+
+  docsPromise.then(docs => {
+    const kpiDocsCount = document.getElementById('kpi-docs-count');
+    const docsList = document.getElementById('docs-list');
+
+    if (kpiDocsCount) kpiDocsCount.textContent = docs.length > 0 ? `${docs.length} File${docs.length !== 1 ? 's' : ''}` : '0 Files';
+
+    if (docsList) {
+      if (docs.length === 0) {
+        docsList.innerHTML = `<li style="color:var(--text-muted);padding:12px 0;">No documents uploaded yet.</li>`;
+      } else {
+        docsList.innerHTML = docs.map(d => `
+          <li>
+            <svg class="file-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
+            <span class="file-name">${escapeHtml(d.fileName)}</span>
+            <a href="${d.fileUrl}" target="_blank" rel="noopener noreferrer" class="doc-dl-btn">Download</a>
+          </li>`).join('');
+      }
+    }
+  }).catch(e => console.error('Docs load error:', e));
 
   // View navigation
   const navDashboard = document.getElementById('nav-link-dashboard');
   const navCases = document.getElementById('nav-link-cases');
+  const navDocuments = document.getElementById('nav-link-documents');
   const viewDashboard = document.getElementById('view-dashboard');
   const viewCases = document.getElementById('view-cases');
+  const viewDocuments = document.getElementById('view-documents');
 
-  if (navDashboard && navCases && viewDashboard && viewCases) {
-    navDashboard.onclick = e => {
-      e.preventDefault();
-      viewDashboard.style.display = 'block';
-      viewCases.style.display = 'none';
-      navDashboard.classList.add('active');
-      navCases.classList.remove('active');
-    };
+  function showView(view: 'dashboard' | 'cases' | 'documents') {
+    if (viewDashboard) viewDashboard.style.display = view === 'dashboard' ? 'block' : 'none';
+    if (viewCases)     viewCases.style.display     = view === 'cases'     ? 'block' : 'none';
+    if (viewDocuments) viewDocuments.style.display = view === 'documents' ? 'block' : 'none';
+    navDashboard?.classList.toggle('active', view === 'dashboard');
+    navCases?.classList.toggle('active', view === 'cases');
+    navDocuments?.classList.toggle('active', view === 'documents');
+  }
 
+  if (navDashboard) {
+    navDashboard.onclick = e => { e.preventDefault(); showView('dashboard'); };
+  }
+
+  if (navCases) {
     navCases.onclick = async e => {
       e.preventDefault();
-      viewDashboard.style.display = 'none';
-      viewCases.style.display = 'block';
-      navCases.classList.add('active');
-      navDashboard.classList.remove('active');
+      showView('cases');
       await renderCasesList(user.uid);
+    };
+  }
+
+  if (navDocuments) {
+    navDocuments.onclick = async e => {
+      e.preventDefault();
+      showView('documents');
+      await renderDocumentsView(user.uid);
     };
   }
 }
@@ -330,8 +396,71 @@ async function renderCasesList(userId: string): Promise<void> {
   }
 }
 
+async function renderDocumentsView(userId: string): Promise<void> {
+  const container = document.getElementById('documents-view-container');
+  if (!container) return;
+
+  container.innerHTML = `<p style="text-align:center;color:var(--text-muted);padding:40px 0;">Loading documents...</p>`;
+
+  try {
+    // Fetch docs and most recent case in parallel
+    const [docs, caseData] = await Promise.all([
+      getDocumentsByUserId(userId),
+      getCaseByUserId(userId),
+    ]);
+
+    if (docs.length === 0) {
+      container.innerHTML = `
+        <div style="text-align:center;padding:80px 20px;">
+          <svg width="48" height="48" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" style="color:var(--text-muted);margin-bottom:16px;"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+          <h3 style="color:var(--gold-accent);font-weight:700;margin-bottom:8px;">No documents yet</h3>
+          <p style="color:var(--text-muted);">Your legal team will upload documents here as your case progresses.</p>
+        </div>`;
+      return;
+    }
+
+    // Case info for display
+    const caseName = caseData ? escapeHtml(caseData.caseStage) : 'Your Case';
+    const caseDate = caseData
+      ? (() => {
+          const ts = (caseData as any).createdAt;
+          return ts?.toDate
+            ? ts.toDate().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })
+            : 'N/A';
+        })()
+      : 'N/A';
+
+    container.innerHTML = `
+      <div style="margin-bottom:24px;padding:16px 20px;background:rgba(201,164,74,0.06);border:1px solid var(--border-default);border-radius:12px;display:flex;gap:16px;align-items:center;">
+        <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="color:var(--gold-accent);flex-shrink:0;"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+        <div>
+          <p style="margin:0;font-size:0.8rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;">Case</p>
+          <p style="margin:2px 0 0;font-weight:700;color:var(--text-primary);">${caseName}</p>
+        </div>
+        <div style="margin-left:32px;">
+          <p style="margin:0;font-size:0.8rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;">Opened</p>
+          <p style="margin:2px 0 0;font-weight:700;color:var(--text-primary);">${caseDate}</p>
+        </div>
+        <div style="margin-left:32px;">
+          <p style="margin:0;font-size:0.8rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;">Documents</p>
+          <p style="margin:2px 0 0;font-weight:700;color:var(--gold-accent);">${docs.length} File${docs.length !== 1 ? 's' : ''}</p>
+        </div>
+      </div>
+      <ul class="clean-docs-list">
+        ${docs.map(d => `
+          <li>
+            <svg class="file-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
+            <span class="file-name">${escapeHtml(d.fileName)}</span>
+            <a href="${d.fileUrl}" target="_blank" rel="noopener noreferrer" class="doc-dl-btn">Download</a>
+          </li>`).join('')}
+      </ul>`;
+  } catch (error) {
+    console.error('Error rendering documents view:', error);
+    container.innerHTML = `<p style="color:#ef4444;text-align:center;padding:20px;">Failed to load documents. Please try again.</p>`;
+  }
+}
+
 // ─────────────────────────────────────────────
-// ADMIN DASHBOARD EVENTS
 // ─────────────────────────────────────────────
 
 async function setupAdminEvents(role: 'admin' | 'client'): Promise<void> {

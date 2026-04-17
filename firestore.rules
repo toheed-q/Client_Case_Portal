@@ -2,53 +2,13 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    // Helper function: check if the requesting user is an admin
-    function isAdmin() {
-      return request.auth != null &&
-             get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
-    }
-
-    // ── User Profiles ──────────────────────────────────────────────
-    // Users can read their own profile.
-    // Admins can read all profiles (needed for dropdown population).
-    // New users self-register via authService.register() → "client" role only.
-    // Admins cannot be created via the app — must be set manually in Firebase Console.
     match /users/{uid} {
-      // Allow users to read their own document
-      allow read: if request.auth != null && request.auth.uid == uid;
-      
-      // Allow admins to read all user documents
-      allow read: if isAdmin();
-
-      allow write: if request.auth != null && request.auth.uid == uid;
+      allow read, write: if request.auth != null && request.auth.uid == uid;
+      allow read: if request.auth != null;
     }
 
-    // ── Cases ──────────────────────────────────────────────────────
-    // Clients can only read their own cases.
-    // Admins have full read/write access.
-    // TODO: Replace admin writes with webhook (Zapier) or Clio API via Cloud Functions
     match /cases/{caseId} {
-      allow read: if request.auth != null &&
-                     (resource.data.userId == request.auth.uid || isAdmin());
-
-      allow create: if isAdmin() &&
-                       request.resource.data.keys().hasAll(['userId', 'caseStage', 'statusSummary']) &&
-                       request.resource.data.caseStage in [
-                         'New Case (Onboarding)',
-                         'Treatment Ongoing',
-                         'Treatment Complete',
-                         'Case Closed'
-                       ];
-
-      allow update: if isAdmin() &&
-                       request.resource.data.caseStage in [
-                         'New Case (Onboarding)',
-                         'Treatment Ongoing',
-                         'Treatment Complete',
-                         'Case Closed'
-                       ];
-
-      allow delete: if isAdmin();
+      allow read, write: if request.auth != null;
     }
   }
 }

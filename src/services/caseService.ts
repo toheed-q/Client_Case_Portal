@@ -8,6 +8,7 @@ import {
   query,
   where,
   limit,
+  orderBy,
   serverTimestamp
 } from 'firebase/firestore';
 import { db } from './firebase';
@@ -23,10 +24,19 @@ export interface Case {
   updatedAt?: unknown;
 }
 
+// Must match external system (Clio API / Zapier payload)
 export const CASE_STAGES = [
   'New Case (Onboarding)',
-  'Treatment Ongoing',
-  'Treatment Complete',
+  'Initial Consultation Scheduled',
+  'Retainer Signed',
+  'Investigation & Evidence Gathering',
+  'Demand Letter Sent',
+  'Negotiation in Progress',
+  'Settlement Offered',
+  'Litigation Filed',
+  'Pre-Trial Proceedings',
+  'Trial in Progress',
+  'Settlement Reached',
   'Case Closed',
 ] as const;
 
@@ -49,7 +59,13 @@ export type CaseStage = typeof CASE_STAGES[number];
  */
 export async function getCaseByUserId(userId: string): Promise<Case | null> {
   try {
-    const q = query(collection(db, 'cases'), where('userId', '==', userId), limit(1));
+    // Order by createdAt desc — always returns the most recent case
+    const q = query(
+      collection(db, 'cases'),
+      where('userId', '==', userId),
+      orderBy('createdAt', 'desc'),
+      limit(1)
+    );
     const snapshot = await getDocs(q);
 
     if (snapshot.empty) return null;
@@ -61,6 +77,8 @@ export async function getCaseByUserId(userId: string): Promise<Case | null> {
       userId: docData.userId,
       caseStage: docData.caseStage,
       statusSummary: docData.statusSummary,
+      createdAt: docData.createdAt,
+      updatedAt: docData.updatedAt,
     } as Case;
   } catch (error) {
     console.error('Error fetching case by user ID:', error);
