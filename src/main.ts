@@ -8,7 +8,7 @@
  *   Logged in + client → /src/pages/dashboard.html
  */
 
-// Initialize Firebase first
+import './styles/global.css';
 import './services/firebase';
 
 import {
