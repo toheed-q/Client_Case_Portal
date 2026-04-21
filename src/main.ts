@@ -94,9 +94,9 @@ async function loadView(
   if (currentView === view) return;
 
   const urlMap = {
-    login: '/src/pages/login.html',
-    dashboard: '/src/pages/dashboard.html',
-    admin: '/src/pages/admin.html',
+    login: '/pages/login.html',
+    dashboard: '/pages/dashboard.html',
+    admin: '/pages/admin.html',
   };
 
   try {
